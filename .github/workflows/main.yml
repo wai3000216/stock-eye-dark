@@ -8,36 +8,34 @@ jobs:
   checkin:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: 自动更新README涨绿点
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          pip install requests
           python <<EOF
           import requests
           from datetime import datetime
 
-          # 已自动填写你的信息
           USER_NAME = "wai3000216"
           REPO_NAME = "stock-eye-dark"
+          YOUR_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
 
           headers = {
-              "Authorization": "Bearer ${{ secrets.GITHUB_TOKEN }}",
+              "Authorization": f"Bearer {YOUR_TOKEN}",
               "Accept": "application/vnd.github.v3+json"
           }
 
-          # 获取文件
           url = f"https://api.github.com/repos/{USER_NAME}/{REPO_NAME}/contents/README.md"
           res = requests.get(url, headers=headers)
           sha = res.json()["sha"]
 
-          # 每日更新内容
           content = f"# A股炒股VSCode护眼主题\n自动签到：{datetime.now().strftime('%Y-%m-%d')}\nPython量化 | 本地AI | 同花顺工具"
 
-          # 提交更新
           data = {
               "message": f"每日签到 {datetime.now().date()}",
               "content": content.encode("utf-8").decode("base64"),
               "sha": sha
           }
           requests.put(url, json=data, headers=headers)
+          print("✅ 签到成功！绿点+1")
           EOF
