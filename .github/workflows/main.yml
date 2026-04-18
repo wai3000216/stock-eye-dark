@@ -9,33 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 自动更新README涨绿点
+
+      - name: 每日更新README
         run: |
-          pip install requests
-          python <<EOF
-          import requests
-          from datetime import datetime
+          echo "# A股炒股VSCode护眼主题" > README.md
+          echo "自动签到：$(date +%Y-%m-%d)" >> README.md
+          echo "Python量化 | Ollama本地AI | 同花顺工具" >> README.md
 
-          USER_NAME = "wai3000216"
-          REPO_NAME = "stock-eye-dark"
-          YOUR_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
-
-          headers = {
-              "Authorization": f"Bearer {YOUR_TOKEN}",
-              "Accept": "application/vnd.github.v3+json"
-          }
-
-          url = f"https://api.github.com/repos/{USER_NAME}/{REPO_NAME}/contents/README.md"
-          res = requests.get(url, headers=headers)
-          sha = res.json()["sha"]
-
-          content = f"# A股炒股VSCode护眼主题\n自动签到：{datetime.now().strftime('%Y-%m-%d')}\nPython量化 | 本地AI | 同花顺工具"
-
-          data = {
-              "message": f"每日签到 {datetime.now().date()}",
-              "content": content.encode("utf-8").decode("base64"),
-              "sha": sha
-          }
-          requests.put(url, json=data, headers=headers)
-          print("✅ 签到成功！绿点+1")
-          EOF
+      - name: 提交更新涨绿点
+        uses: git-actions/commit@v4
+        with:
+          name: GitHub Actions
+          email: actions@github.com
+          message: 每日自动签到更新
