@@ -16,10 +16,8 @@ jobs:
           echo "自动签到：$(date +%Y-%m-%d)" >> README.md
           echo "Python量化 | Ollama本地AI | 同花顺工具" >> README.md
 
-      - name: Git提交更新
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "每日自动签到更新"
-          git push
+      - name: 安全提交推送
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
